@@ -1,0 +1,43 @@
+/* Design tokens: DESIGN.md front matter, RiseUp's palette plus the project green. */
+:root {
+  --canvas: #fcf7ed;
+  --card: #ffffff;
+  --card-muted: #f4f1ea;
+  --divider: #f0ece3;
+  --ink: #222222;
+  --ink-secondary: #444444;
+  --label: #6b6b6b;
+
+  --variable: #f7d147;
+  --variable-tint: #fcf0c8;
+  --tracked: #5d7afd;
+  --tracked-tint: #dce3f5;
+  --fixed: #f34f8a;
+  --fixed-tint: #feeef1;
+  --income: #00c070;
+  --income-tint: #eaf4c0;
+  --income-text: #00a862;
+  --negative: #ed6f4c;
+  --project: #205441;
+  --project-tint: #dce8e1;
+  --project-row: #eef4f0;
+  --tracked-row: #eef1fe;
+  --toast: #1e2446;
+  --scrim: rgba(20, 24, 40, 0.45);
+
+  --font: "Rubik", system-ui, sans-serif;
+
+  --r-bar: 4px;
+  --r-control: 12px;
+  --r-card: 16px;
+  --r-modal: 18px;
+  --r-sheet: 20px;
+  --r-pill: 999px;
+
+  --gutter: 12px;
+  --card-pad: 16px;
+  --card-gap: 12px;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-modal: 0 10px 30px rgba(0, 0, 0, 0.18);
+}

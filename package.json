@@ -1,0 +1,52 @@
+{
+  "name": "family-finance",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "update": "node scripts/update.mjs",
+    "add-person": "node scripts/add-person.mjs",
+    "remove-person": "node scripts/remove-person.mjs",
+    "dev": "vite dev",
+    "deploy": "node scripts/deploy.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc && tsc -p web",
+    "validate": "tsc && tsc -p web && vitest run",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.62.3",
+    "@cloudflare/vitest-pool-workers": "^0.22.0",
+    "@cloudflare/workers-types": "^5.20260929.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "miniflare": "5.20260930.0-alpha",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^4.1.11",
+    "wrangler": "^4.145.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "workerd@1.20260930.2": true
+  },
+  "dependencies": {
+    "@fontsource/rubik": "^5.3.0",
+    "@simplewebauthn/browser": "^13.3.0",
+    "@simplewebauthn/server": "^13.3.3",
+    "hono": "^4.13.10",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "overrides": {
+    "@cloudflare/vitest-pool-workers": {
+      "miniflare": "$miniflare",
+      "wrangler": "$wrangler"
+    },
+    "@cloudflare/vite-plugin": {
+      "miniflare": "$miniflare",
+      "wrangler": "$wrangler"
+    }
+  }
+}

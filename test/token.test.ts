@@ -55,6 +55,11 @@ describe("saving the RiseUp token", () => {
     expect(n!.n).toBe(0);
   });
 
+  it("drops quote marks copied along with the token", async () => {
+    expect(await saveRiseupToken(env, `"${TOKEN}"`, "2026-09", new Date(), okClient)).toMatchObject({ ok: true });
+    expect(await loadRiseupToken(env)).toBe(TOKEN);
+  });
+
   it("falls back to the Phase 1 secret until a token is saved, then prefers the saved one", async () => {
     expect(await loadRiseupToken(env)).toBe("riseup_pat_test");
     await saveRiseupToken(env, TOKEN, "2026-09", new Date(), okClient);

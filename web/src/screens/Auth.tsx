@@ -344,7 +344,7 @@ export function RenewToken({ me, onDone }: { me: Me; onDone: () => void }) {
       onDone();
       navigate("/", true);
     } catch (e) {
-      setError(e instanceof ApiError && e.status === 400 ? t.tokenRejected : errorText(e));
+      setError(e instanceof ApiError && e.status === 400 ? (e.code === "invalid" ? t.tokenMalformed : t.tokenRejected) : errorText(e));
     } finally {
       setBusy(false);
     }

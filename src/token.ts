@@ -70,7 +70,8 @@ export async function saveRiseupToken(
   now = new Date(),
   client: (t: string) => RiseupClient = riseupClient,
 ): Promise<SaveResult> {
-  const t = token.trim();
+  // A token copied from a config line often brings its quote marks along (RISEUP_PAT="…").
+  const t = token.trim().replace(/^(["'])(.*)\1$/, "$2");
   if (t.length < 16 || t.length > 512 || /\s/.test(t)) return { ok: false, reason: "invalid" };
   try {
     await client(t).budget(month);

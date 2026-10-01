@@ -87,7 +87,7 @@ if (mode === "email") {
 
 // ── 4. RiseUp ──
 step(4, TOTAL, "Connect RiseUp");
-console.log("  In RiseUp: open the developer tokens page, create a token with read access (budget:read), copy it.");
+console.log("  Open https://input.riseup.co.il/developer/tokens , create a token with the budget:read scope, and copy it (it starts with riseup_pat_).");
 let riseupToken = "";
 for (;;) {
   riseupToken = await ask("RiseUp token (hidden)", { hidden: true });

@@ -31,6 +31,7 @@ npm run setup
 | `Send codes from` | כתובת השולח שאישרתם בשלב 4. |
 | `RiseUp token (hidden)` | מדביקים את הטוקן ולוחצים Enter. |
 | `Name for this copy` | Enter, או שם באנגלית קטנה. |
+| `Your database may not be available… continue?` | `y` ו־Enter. זה מסד הנתונים החדש והריק שלכם. |
 
 **הצלחה:**
 

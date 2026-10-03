@@ -23,7 +23,7 @@
 
 ## 2. מורידים את הקוד
 
-1. בדף הפרויקט ב־GitHub לוחצים **Code › Download ZIP**.
+1. מורידים את הקוד מ[הקישור הזה](https://github.com/jchamma/our-money/archive/refs/heads/master.zip) (או בדף הפרויקט ב־GitHub: **Code › Download ZIP**). הקובץ `our-money-master.zip` נשמר בתיקיית ההורדות.
 2. פותחים את ה־ZIP (לחיצה ימנית › **Extract All**). נוצרת תיקייה בשם `our-money-master`, ובתוכה הקובץ `package.json`.
 3. בחלון הפקודות נכנסים לתיקייה הזו: מקלידים `cd` ורווח, גוררים את התיקייה `our-money-master` לחלון, ולוחצים Enter:
 
@@ -63,8 +63,9 @@ npm run setup
 | `How many people` | `2` לזוג, `1` אם רק אתם. |
 | `RiseUp token (hidden)` | מדביקים את הטוקן (לא יופיע על המסך) ולוחצים Enter. |
 | `Name for this copy` | Enter, או שם באנגלית קטנה (למשל `our-money`). הוא יופיע בכתובת. |
+| `Your database may not be available… continue?` | `y` ו־Enter. זה מסד הנתונים החדש והריק שלכם. |
 
-ההתקנה יוצרת את מסד הנתונים, מעלה את האפליקציה ושומרת את הטוקן מוצפן. זה לוקח כ־2 דקות.
+ההתקנה יוצרת את מסד הנתונים, מעלה את האפליקציה ושומרת את הטוקן מוצפן. זה לוקח כ־2 דקות, ועל המסך רצות הרבה שורות. זה תקין.
 
 אם מופיעה שאלה על **workers.dev subdomain**: מקלידים שם קצר באנגלית (למשל שם המשפחה) ולוחצים Enter. זה קורה רק בפעם הראשונה בחשבון Cloudflare חדש.
 

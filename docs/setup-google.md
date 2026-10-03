@@ -22,6 +22,7 @@ npm run setup
 | `Person 1: Google account` | כתובת ה־Gmail של כל אחד. **רק הכתובות האלו יוכלו להיכנס.** |
 | `RiseUp token (hidden)` | מדביקים את הטוקן ולוחצים Enter. |
 | `Name for this copy` | Enter, או שם באנגלית קטנה. |
+| `Your database may not be available… continue?` | `y` ו־Enter. זה מסד הנתונים החדש והריק שלכם. |
 
 אחרי שהאפליקציה עולה, ההתקנה עוצרת ומציגה שתי כתובות. **השאירו את הטרמינל פתוח** ועברו לשלב 5.
 

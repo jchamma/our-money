@@ -158,39 +158,6 @@
 
 ---
 
-## התקנתם לפני אוקטובר 2026?
-
-העדכונים האוטומטיים עוד לא פעילים אצלכם. מפעילים אותם פעם אחת:
-
-**ב־Windows:**
-1. מורידים מכאן: **https://github.com/jchamma/our-money/archive/refs/heads/master.zip**
-2. קליק ימני על הקובץ שירד ← **Extract All**, כותבים **`C:\`** ולוחצים **Extract**.
-3. כש־Windows שואל אם להחליף קבצים: **Replace the files in the destination**.
-
-**ב־Mac:**
-1. ב־Downloads משנים את שם התיקייה `our-money-master` ל־`our-money-old`.
-2. מורידים מכאן: **https://github.com/jchamma/our-money/archive/refs/heads/master.zip** ולוחצים פעמיים על הקובץ שירד.
-3. פותחים **Terminal**, מדביקים את השורות האלה ולוחצים **Enter**:
-
-   ```
-   cd ~/Downloads
-   cp our-money-old/wrangler.jsonc our-money-master/
-   ```
-
-**ואז, בשניהם:**
-1. פותחים **Terminal**, מדביקים את שורת ה־`cd` משלב 4 ולוחצים **Enter**.
-2. מדביקים את השורה הזו ולוחצים **Enter**:
-
-   ```
-   node scripts/update.mjs
-   ```
-
-3. עונים כמו בטבלה של שלב 4, מהשורה `Turn on automatic updates`.
-
-✅ **סיימתם כשמופיע `Automatic updates are on`.** מעכשיו לא צריך לעשות את זה שוב.
-
----
-
 ## משהו לא עבד?
 
 | מה קרה | מה עושים |

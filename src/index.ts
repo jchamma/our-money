@@ -114,12 +114,15 @@ export function createApp(overrides: Partial<Deps> = {}) {
 
   // Greeting, footer and token banner (frames 7a, 7h, 7m).
   app.get("/api/me", async (c) => {
-    const [members, lastSync, token] = await Promise.all([
+    const [members, lastSync, budget, token] = await Promise.all([
       c.env.DB.prepare("SELECT id, name FROM members ORDER BY id").all<{ id: number; name: string }>(),
       c.env.DB.prepare("SELECT finished_at, status FROM sync_runs WHERE status = 'ok' ORDER BY id DESC LIMIT 1").first(),
+      // When RiseUp last recalculated the newest month: its API can lag behind the RiseUp app.
+      c.env.DB.prepare("SELECT last_updated_at FROM budget_snapshots ORDER BY month DESC LIMIT 1").first<{ last_updated_at: string | null }>(),
       tokenState(c.env),
     ]);
-    return c.json({ me: c.var.member, members: members.results, lastSync, token, mode: c.var.auth.mode });
+    const riseupAsOf = budget?.last_updated_at ?? null;
+    return c.json({ me: c.var.member, members: members.results, lastSync, riseupAsOf, token, mode: c.var.auth.mode });
   });
 
   // First-login name (frame 7e).

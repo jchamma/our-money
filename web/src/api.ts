@@ -93,6 +93,8 @@ export type Me = {
   me: { id: number; name: string; nameConfirmed: boolean };
   members: { id: number; name: string }[];
   lastSync: { finished_at: string; status: string } | null;
+  /** RiseUp's own "last updated" for the newest month's budget. */
+  riseupAsOf: string | null;
   token: { status: "ok" | "expired" | "missing"; expiresAt: string | null };
   mode: "passkey" | "google" | "email";
 };

@@ -35,18 +35,22 @@ function TokenBanner({ token }: { token: Me["token"] }) {
 
 function Footer({ me, onLogout }: { me: Me; onLogout: () => void }) {
   const names = me.members.map((m) => m.name).filter(Boolean);
+  const tz = { timeZone: "Asia/Jerusalem" } as const;
+  const day = (d: Date) => new Intl.DateTimeFormat("he-IL", { ...tz, day: "2-digit", month: "2-digit", year: "numeric" }).format(d);
+  const time = (d: Date) => new Intl.DateTimeFormat("he-IL", { ...tz, hour: "2-digit", minute: "2-digit" }).format(d);
+  // Our sync: just the time when it was today. RiseUp's update: always the full date, since it can lag by days.
   const synced = me.lastSync?.finished_at ? new Date(me.lastSync.finished_at) : null;
-  const when = synced
-    ? new Intl.DateTimeFormat("he-IL", { timeZone: "Asia/Jerusalem", day: "numeric", month: "numeric", hour: "2-digit", minute: "2-digit" }).format(synced)
-    : null;
+  const syncedAt = synced && (day(synced) === day(new Date()) ? time(synced) : `${day(synced)} ${time(synced)}`);
+  const asOf = me.riseupAsOf ? new Date(me.riseupAsOf) : null;
+  const parts = [
+    syncedAt && t.lastSync(syncedAt),
+    asOf && t.riseupAsOf(`${day(asOf)} ${time(asOf)}`),
+    me.token.expiresAt && t.tokenValidUntil(shortDate(me.token.expiresAt)),
+  ].filter(Boolean);
   return (
     <footer className="foot">
       {names.length > 0 && <div>{t.accessFor(names)}</div>}
-      <div className="lbl">
-        {when && t.lastSync(when)}
-        {when && me.token.expiresAt && " · "}
-        {me.token.expiresAt && t.tokenValidUntil(shortDate(me.token.expiresAt))}
-      </div>
+      <div className="lbl">{parts.join(" · ")}</div>
       <button type="button" className="out" onClick={onLogout}>
         {t.logout}
       </button>

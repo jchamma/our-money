@@ -125,7 +125,8 @@ export const t = {
   retry: "לנסות שוב",
 
   accessFor: (names: string[]) => `יש גישה ל${names.join(" ול")}`,
-  lastSync: (when: string) => `עודכן מ-RiseUp ${when}`,
+  lastSync: (when: string) => `המידע סונכרן מ־RiseUp ב־${when}`,
+  riseupAsOf: (when: string) => `המידע נכון ל־${when}`,
   tokenValidUntil: (date: string) => `הטוקן בתוקף עד ${date}`,
   logout: "התנתקות",
 

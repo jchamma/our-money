@@ -1,0 +1,75 @@
+# Keeps an installation on the newest version. Each installation calls this from its own private
+# GitHub repository (set up by `node scripts/auto-update.mjs`), passing its own secrets:
+#   CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, WRANGLER_CONFIG (its wrangler.jsonc).
+# A run with nothing new (same version, same settings) stops after the cache check, unless forced.
+name: Our Money update
+
+on:
+  workflow_call:
+    inputs:
+      force:
+        type: boolean
+        default: false
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      CLOUDFLARE_ACCOUNT_ID:
+        required: true
+      WRANGLER_CONFIG:
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: our-money-update
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: jchamma/our-money
+          ref: master
+
+      # The key covers the settings too, so a settings change (add-person) is deployed even on the same version.
+      - id: version
+        run: echo "key=deployed-$(git rev-parse HEAD)-$(printf '%s' "$WRANGLER_CONFIG" | sha256sum | cut -c1-16)" >> "$GITHUB_OUTPUT"
+        env:
+          WRANGLER_CONFIG: ${{ secrets.WRANGLER_CONFIG }}
+
+      - id: deployed
+        if: ${{ !inputs.force }}
+        uses: actions/cache/restore@v4
+        with:
+          path: .deployed
+          key: ${{ steps.version.outputs.key }}
+          lookup-only: true
+
+      - if: steps.deployed.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - if: steps.deployed.outputs.cache-hit != 'true'
+        run: npm ci --no-audit --no-fund
+
+      - if: steps.deployed.outputs.cache-hit != 'true'
+        run: node scripts/ci-update.mjs
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WRANGLER_CONFIG: ${{ secrets.WRANGLER_CONFIG }}
+
+      - if: steps.deployed.outputs.cache-hit != 'true'
+        run: echo ok > .deployed
+
+      - if: steps.deployed.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        continue-on-error: true # forced runs re-save an existing key
+        with:
+          path: .deployed
+          key: ${{ steps.version.outputs.key }}

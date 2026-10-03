@@ -1,6 +1,8 @@
-// `node scripts/update.mjs` (or `node scripts/update.mjs`): after downloading a new version, bring the database up to date and deploy
-// the new version. Your data and settings stay as they are.
-import { bold, buildAndDeploy, chooseCloudflareAuth, done, getValue, installPackages, ok, readConfig, wrangler } from "./lib.mjs";
+// `node scripts/update.mjs`: after downloading a new version, bring the database up to date and deploy
+// the new version. Your data and settings stay as they are. With automatic updates on
+// (scripts/auto-update.mjs) this happens by itself.
+import { bold, buildAndDeploy, chooseCloudflareAuth, confirm, dim, done, getValue, installPackages, ok, readConfig, wrangler } from "./lib.mjs";
+import { autoUpdateOn, enableAutoUpdate } from "./auto-update.mjs";
 
 const config = readConfig();
 const db = getValue(config, "database_name");
@@ -12,4 +14,10 @@ await wrangler(["d1", "migrations", "apply", db, "--remote"]);
 ok("Database up to date");
 const address = await buildAndDeploy();
 ok(`New version online${address ? ` at ${address}` : ""}\n`);
+if (!autoUpdateOn()) {
+  console.log(`${bold("Automatic updates")}: new versions can install themselves, so you never need to run this again.`);
+  console.log(dim("  Through a private GitHub repository in your account (free). Your data never goes to GitHub."));
+  if (await confirm("Turn on automatic updates (recommended)?")) await enableAutoUpdate(config);
+  console.log("");
+}
 done();

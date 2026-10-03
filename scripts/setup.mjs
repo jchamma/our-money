@@ -33,8 +33,9 @@ import {
   done,
   ensurePackages,
 } from "./lib.mjs";
+import { enableAutoUpdate } from "./auto-update.mjs";
 
-const TOTAL = 7;
+const TOTAL = 8;
 
 console.log(`\n${bold("Our Money · setup")}${DRY ? dim("  (dry run: nothing is created)") : ""}`);
 console.log("  About 5 minutes. Everything runs on your own Cloudflare account, on the free plan.");
@@ -157,8 +158,15 @@ if (mode === "google") {
   ok("Google login connected");
 }
 
-// ── 7. Access ──
-step(7, TOTAL, "Open the app");
+// ── 7. Automatic updates ──
+step(7, TOTAL, "Automatic updates");
+console.log("  New versions (fixes, improvements) install themselves, through a private GitHub repository in your account.");
+console.log(dim("  Your data never goes to GitHub. Needs a free GitHub account; you can open one now."));
+if (await confirm("Turn on automatic updates (recommended)?")) await enableAutoUpdate(config);
+else console.log(dim("  Skipped. To turn them on later: node scripts/auto-update.mjs"));
+
+// ── 8. Access ──
+step(8, TOTAL, "Open the app");
 if (mode === "passkey") {
   console.log("  Send each person their own link. Open it on the phone, and Face ID / fingerprint does the rest.");
   console.log(`  ${dim("Each link works once, for 24 hours. Need a new one? node scripts/add-person.mjs")}\n`);
@@ -168,7 +176,7 @@ if (mode === "passkey") {
   console.log(`  Open ${address} on your phone and log in with ${emails.join(" or ")}.`);
 }
 console.log(`\n  ${green(bold("Done."))} On the phone: Share › Add to Home Screen (iPhone), or ⋮ › Install app (Android).`);
-console.log(`  ${dim("The first open loads your RiseUp data; after that it updates every night.")}\n`);
+console.log(`  ${dim("The app brings the latest from RiseUp every time you open it.")}\n`);
 
 writeConfig(config); // setup finished
 done();

@@ -29,6 +29,10 @@ function useSession() {
   useEffect(() => {
     void refresh();
   }, [refresh]);
+  /** Updates `me` in the background; a failed call keeps what's on screen. */
+  const softRefresh = useCallback(() => {
+    api.get<Me>("/api/me").then((me) => setSession({ state: "in", me }), () => undefined);
+  }, []);
   // A session that expires while the app is open: back to login (only from signed in, or it would loop).
   const signedIn = useRef(false);
   signedIn.current = session.state === "in";
@@ -37,7 +41,7 @@ function useSession() {
     window.addEventListener(SIGNED_OUT, out);
     return () => window.removeEventListener(SIGNED_OUT, out);
   }, [refresh]);
-  return { session, refresh };
+  return { session, refresh, softRefresh };
 }
 
 const monthParam = (search: string) => {
@@ -47,7 +51,7 @@ const monthParam = (search: string) => {
 
 export function App() {
   const path = usePath();
-  const { session, refresh } = useSession();
+  const { session, refresh, softRefresh } = useSession();
   const [pathname, search = ""] = path.split("?");
 
   // The invite link works signed out; it's the only way in with passkeys.
@@ -76,5 +80,5 @@ export function App() {
   const project = /^\/projects\/(\d+)$/.exec(pathname);
   if (project) return <ProjectPage id={Number(project[1])} month={month} />;
   if (pathname === "/renew-token") return <RenewToken me={me} onDone={refresh} />;
-  return <Home me={me} month={month} onLogout={logout} />;
+  return <Home me={me} month={month} onLogout={logout} onSynced={softRefresh} />;
 }

@@ -2,8 +2,8 @@
 
 # התקנה: "הכסף שלנו"
 
-**כמה זמן:** 15 דקות.
-**מה צריך:** מחשב, טלפון וחשבון RiseUp.
+**כמה זמן:** 20 דקות.
+**מה צריך:** מחשב, טלפון, חשבון RiseUp, וחשבון GitHub (חינם, אפשר לפתוח תוך כדי ההתקנה).
 
 הכניסה לאפליקציה היא עם Face ID או טביעת אצבע.
 רוצים כניסה עם חשבון Google במקום? [המדריך ל־Google](setup-google.md).
@@ -14,6 +14,7 @@
 
 1. נכנסים ל־**https://nodejs.org/en/download**
 2. מורידים ומתקינים, עם כל ברירות המחדל.
+3. **ב־Mac בלבד:** נכנסים ל־**https://cli.github.com**, לוחצים **Download for Mac** ומתקינים, עם כל ברירות המחדל.
 
 ✅ **סיימתם את שלב 1.**
 
@@ -78,6 +79,12 @@
 | `RiseUp token` | מדביקים את הקוד משלב 3 ולוחצים **Enter** (לא רואים כלום על המסך, וזה בסדר) |
 | `continue?` | `y` ואז **Enter** |
 | `workers.dev subdomain` | שם קצר באנגלית, למשל שם המשפחה, ואז **Enter** |
+| `Turn on automatic updates` | **Enter** |
+| חלון של Windows שואל אם לאשר שינויים | **Yes** (זו התקנה של GitHub CLI) |
+| `Authenticate Git` | **Enter** |
+| `Press Enter to open github.com` | מעתיקים את הקוד בן 8 התווים שמופיע שורה אחת מעל, ולוחצים **Enter**. בדפדפן שנפתח: נרשמים ל־GitHub (חינם) או נכנסים, מדביקים את הקוד ולוחצים **Authorize** |
+| `Cloudflare API token` | לוחצים על הקישור הארוך שמופיע מעל, עם **Ctrl** (ב־Mac: **Cmd**). בדף שנפתח: **Continue to summary** ← **Create Token** ← **Copy**. חוזרים ל־Terminal, מדביקים ולוחצים **Enter** (לא רואים כלום על המסך, וזה בסדר) |
+| `Checking it works` | מחכים 2–4 דקות, עד שמופיע `Automatic updates are on` |
 
 ✅ **סיימתם את שלב 4 כשמופיעה המילה `Done.`**
 
@@ -144,10 +151,51 @@
 
 ---
 
+## עדכונים
+
+גרסאות חדשות (תיקונים ושיפורים) מותקנות לבד, תוך 3 שעות מרגע שהן יוצאות. לא צריך לעשות כלום.
+העדכונים עוברים דרך מאגר פרטי בחשבון ה־GitHub שלכם, `our-money-updates`. הנתונים שלכם לא עוברים ל־GitHub.
+
+---
+
+## התקנתם לפני אוקטובר 2026?
+
+העדכונים האוטומטיים עוד לא פעילים אצלכם. מפעילים אותם פעם אחת:
+
+**ב־Windows:**
+1. מורידים מכאן: **https://github.com/jchamma/our-money/archive/refs/heads/master.zip**
+2. קליק ימני על הקובץ שירד ← **Extract All**, כותבים **`C:\`** ולוחצים **Extract**.
+3. כש־Windows שואל אם להחליף קבצים: **Replace the files in the destination**.
+
+**ב־Mac:**
+1. ב־Downloads משנים את שם התיקייה `our-money-master` ל־`our-money-old`.
+2. מורידים מכאן: **https://github.com/jchamma/our-money/archive/refs/heads/master.zip** ולוחצים פעמיים על הקובץ שירד.
+3. פותחים **Terminal**, מדביקים את השורות האלה ולוחצים **Enter**:
+
+   ```
+   cd ~/Downloads
+   cp our-money-old/wrangler.jsonc our-money-master/
+   ```
+
+**ואז, בשניהם:**
+1. פותחים **Terminal**, מדביקים את שורת ה־`cd` משלב 4 ולוחצים **Enter**.
+2. מדביקים את השורה הזו ולוחצים **Enter**:
+
+   ```
+   node scripts/update.mjs
+   ```
+
+3. עונים כמו בטבלה של שלב 4, מהשורה `Turn on automatic updates`.
+
+✅ **סיימתם כשמופיע `Automatic updates are on`.** מעכשיו לא צריך לעשות את זה שוב.
+
+---
+
 ## משהו לא עבד?
 
 | מה קרה | מה עושים |
 |---|---|
+| `Couldn't turn on automatic updates` / `The first update didn't finish` | האפליקציה עובדת. פותחים **Terminal**, מדביקים את שורת ה־`cd` משלב 4, ואז `node scripts/auto-update.mjs` ו־**Enter** |
 | `RiseUp didn't accept this token` | עושים שוב את שלב 3 ומדביקים את הקוד החדש |
 | `node` לא מוכר | עושים שוב את שלב 1, סוגרים את ה־Terminal ופותחים מחדש |
 | `cannot find path` / `No such file` | עושים שוב את שלב 2 בדיוק כמו שכתוב |

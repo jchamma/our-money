@@ -2,7 +2,7 @@
 // Node built-ins only. Terminal text is English: many terminals render Hebrew badly.
 import { spawn } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { createInterface } from "node:readline";
 import { fileURLToPath } from "node:url";
 
@@ -107,14 +107,20 @@ export async function chooseCloudflareAuth() {
  * Run a command. `capture` returns stdout (still echoed unless `quiet`); `input` is written to
  * stdin (used for secrets, so they never appear on a command line).
  */
-export function run(file, args, { capture = false, quiet = false, input, allowFail = false } = {}) {
-  const shown = `${file === WRANGLER ? "wrangler" : file === VITE ? "vite" : file} ${args.join(" ")}`;
+export function run(file, args, opts) {
+  return spawnRun(process.execPath, [file, ...args], `${file === WRANGLER ? "wrangler" : file === VITE ? "vite" : file} ${args.join(" ")}`, opts);
+}
+
+/** Run a program that isn't a Node script (the GitHub CLI). Same options as `run`. */
+export const runExe = (exe, args, opts) => spawnRun(exe, args, `${basename(exe)} ${args.join(" ")}`, opts);
+
+function spawnRun(command, argv, shown, { capture = false, quiet = false, input, allowFail = false } = {}) {
   if (DRY) {
     console.log(dim(`  (dry run) ${shown}`));
     return Promise.resolve({ code: 0, out: "" });
   }
   return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, [file, ...args], {
+    const child = spawn(command, argv, {
       cwd: ROOT,
       env: childEnv,
       stdio: [input !== undefined ? "pipe" : "inherit", capture ? "pipe" : "inherit", "inherit"],
@@ -270,6 +276,12 @@ export const revokeInvites = (dbName) => d1(dbName, "DELETE FROM invites WHERE u
 export async function deployConfig(text) {
   const before = readConfig();
   writeConfig(text);
+  const auto = await import("./auto-update.mjs");
+  if (auto.autoUpdateOn() && !DRY) {
+    if (await auto.deployThroughGitHub(text, before)) return null;
+    writeConfig(before);
+    fail("The change wasn't deployed. Run this again in a few minutes.");
+  }
   try {
     return await buildAndDeploy();
   } catch (e) {

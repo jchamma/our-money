@@ -9,8 +9,10 @@ import { LoadFailed, MonthSwitcher, Net, SectionCard, spendStatus, TxRows } from
 import { AssignFlow } from "./AssignFlow";
 
 const DAY = 86_400_000;
-/** Once per app load, even if Home remounts before `me` shows the first sync. */
-let firstSyncTried = false;
+/** Back in the foreground after this long: pull from RiseUp again. */
+const RESYNC_AFTER = 5 * 60_000;
+/** Shared across Home remounts, so a month switch doesn't sync again. */
+let lastSyncTry = 0;
 
 function TokenBanner({ token }: { token: Me["token"] }) {
   if (token.status === "missing" || !token.expiresAt) return null;
@@ -52,16 +54,30 @@ function Footer({ me, onLogout }: { me: Me; onLogout: () => void }) {
   );
 }
 
-export function Home({ me, month, onLogout }: { me: Me; month: string; onLogout: () => void }) {
+export function Home({ me, month, onLogout, onSynced }: { me: Me; month: string; onLogout: () => void; onSynced: () => void }) {
   const { data, failed, reload } = useLoad<HomeData>(`/api/months/${month}`);
   const [moving, setMoving] = useState<Tx | null>(null);
-  // A fresh installation has never synced (the nightly run is at 03:00 UTC): sync once on first open.
-  const neverSynced = !me.lastSync && me.token.status === "ok";
+  // Fresh numbers on every open and on return to the foreground (the nightly run is only a fallback).
+  const canSync = me.token.status === "ok";
   useEffect(() => {
-    if (!neverSynced || firstSyncTried) return;
-    firstSyncTried = true;
-    void api.post("/api/sync").then(reload, () => undefined);
-  }, [neverSynced, reload]);
+    if (!canSync) return;
+    const sync = () => {
+      if (Date.now() - lastSyncTry < RESYNC_AFTER) return;
+      lastSyncTry = Date.now();
+      // Also after a failure: an expired RiseUp token shows its renew banner.
+      void api
+        .post("/api/sync")
+        .catch(() => undefined)
+        .then(() => {
+          reload();
+          onSynced();
+        });
+    };
+    const onVisible = () => document.visibilityState === "visible" && sync();
+    sync();
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [canSync, reload, onSynced]);
 
   const names = me.members.map((m) => m.name).filter(Boolean);
   const move = { label: t.moveToProject, onPick: setMoving };

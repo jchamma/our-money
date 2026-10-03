@@ -6,7 +6,7 @@
 
 ## 1–3. Node.js, הקוד וטוקן RiseUp
 
-בדיוק כמו בשלבים 1–3 של [המדריך ל־Passkeys](setup-passkeys.md#1-מתקינים-nodejs).
+עושים את שלבים 1, 2 ו־3 מ[המדריך הזה](setup-passkeys.md), ואז חוזרים לכאן.
 
 ## 4. פותחים חשבון Brevo
 

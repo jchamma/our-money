@@ -1,92 +1,170 @@
 <div dir="rtl">
 
-# התקנה עם כניסת Google
+# התקנה עם כניסה דרך Google: "הכסף שלנו"
 
-כל אחד נכנס עם חשבון Google שלו. זה דורש פרויקט ב־Google Cloud, כ־10 דקות יותר מ־[Passkeys](setup-passkeys.md). **אם אין לכם סיבה מיוחדת, Passkeys פשוטות יותר.**
+**כמה זמן:** 25 דקות.
+**מה צריך:** מחשב, טלפון, חשבון RiseUp, וחשבון Gmail לכל אחד מכם.
 
-## 1–3. Node.js, הקוד וטוקן RiseUp
+הכניסה לאפליקציה היא עם חשבון Google. רק כתובות ה־Gmail שתכתבו יוכלו להיכנס.
 
-עושים את שלבים 1, 2 ו־3 מ[המדריך הזה](setup-passkeys.md), ואז חוזרים לכאן.
+**טיפ:** כניסה עם Face ID פשוטה יותר וקצרה ב־10 דקות: [המדריך ל־Face ID](setup-passkeys.md).
 
-## 4. מריצים את ההתקנה
+---
 
-```
-npm run setup
-```
+## שלב 1: מתקינים Node.js
 
-| השאלה | מה עונים |
+1. נכנסים ל־**https://nodejs.org/en/download**
+2. מורידים ומתקינים, עם כל ברירות המחדל.
+
+✅ **סיימתם את שלב 1.**
+
+---
+
+## שלב 2: מורידים את האפליקציה
+
+**ב־Windows:**
+1. מורידים מכאן: **https://github.com/jchamma/our-money/archive/refs/heads/master.zip**
+2. קליק ימני על הקובץ שירד ← **Extract All**.
+3. מוחקים את הכתובת שבחלון וכותבים במקומה: **`C:\`**
+4. לוחצים **Extract**.
+
+✅ **נוצרה התיקייה `C:\our-money-master`.**
+
+**ב־Mac:**
+1. מורידים מכאן: **https://github.com/jchamma/our-money/archive/refs/heads/master.zip**
+2. לוחצים פעמיים על הקובץ שירד.
+
+✅ **נוצרה התיקייה `our-money-master` בתוך Downloads.**
+
+---
+
+## שלב 3: מקבלים קוד מ־RiseUp
+
+1. נכנסים ל־**https://input.riseup.co.il/developer/tokens**
+2. לוחצים **צור טוקן חדש**.
+3. נותנים לו שם, למשל `OurMoney`.
+4. מסמנים **`budget:read`** ויוצרים.
+5. מעתיקים את הקוד **מיד**: הוא מופיע רק פעם אחת.
+
+✅ **סיימתם את שלב 3.**
+
+---
+
+## שלב 4: מתקינים
+
+1. פותחים **Terminal**.
+2. מדביקים את השורה הזו ולוחצים **Enter**:
+
+   ב־Windows:
+   ```
+   cd C:\our-money-master
+   ```
+   ב־Mac:
+   ```
+   cd ~/Downloads/our-money-master
+   ```
+
+3. מדביקים את השורה הזו ולוחצים **Enter**:
+
+   ```
+   node scripts/setup.mjs
+   ```
+
+4. עונים על השאלות. **בכל שאלה לוחצים Enter**, חוץ מאלה:
+
+| כשרואים | עושים |
 |---|---|
-| חלון דפדפן של Cloudflare | נכנסים או נרשמים (חינם, בלי כרטיס) ולוחצים **Allow**. |
-| `How will you log in?` | `2` (Google). |
-| `How many people` | `2` לזוג, `1` אם רק אתם. |
-| `Person 1: Google account` | כתובת ה־Gmail של כל אחד. **רק הכתובות האלו יוכלו להיכנס.** |
-| `RiseUp token (hidden)` | מדביקים את הטוקן ולוחצים Enter. |
-| `Name for this copy` | Enter, או שם באנגלית קטנה. |
-| `Your database may not be available… continue?` | `y` ו־Enter. זה מסד הנתונים החדש והריק שלכם. |
+| נפתח דפדפן של **Cloudflare** | נרשמים (חינם, בלי כרטיס אשראי) או נכנסים, ולוחצים **Allow** |
+| `How will you log in?` | `2` ואז **Enter** |
+| `How many people` | **Enter** לזוג, או `1` אם זה רק אתם |
+| `Person 1: Google account` | כתובת ה־Gmail שלכם, ואז **Enter** |
+| `Person 2: Google account` | כתובת ה־Gmail של בן או בת הזוג, ואז **Enter** |
+| `RiseUp token` | מדביקים את הקוד משלב 3 ולוחצים **Enter** (לא רואים כלום על המסך, וזה בסדר) |
+| `continue?` | `y` ואז **Enter** |
+| `workers.dev subdomain` | שם קצר באנגלית, למשל שם המשפחה, ואז **Enter** |
 
-אחרי שהאפליקציה עולה, ההתקנה עוצרת ומציגה שתי כתובות. **השאירו את הטרמינל פתוח** ועברו לשלב 5.
+ההתקנה עוצרת ומראה שתי כתובות:
 
 ```
-  Google: create an OAuth client (type "Web application") in Google Cloud with:
-    Authorized JavaScript origin:  https://our-money.<שם>.workers.dev
-    Authorized redirect URI:       https://our-money.<שם>.workers.dev/auth/google/callback
-  Client ID:
+Authorized JavaScript origin:  https://...
+Authorized redirect URI:       https://.../auth/google/callback
 ```
 
-## 5. יוצרים כניסת Google ב־Google Cloud
+**לא סוגרים את ה־Terminal.** עוברים לשלב 5.
 
-1. נכנסים ל־[console.cloud.google.com](https://console.cloud.google.com) עם חשבון Google (של אחד מכם).
-2. למעלה בוחרים **Select a project › New project**, קוראים לו `our-money` ולוחצים **Create**. מוודאים שהוא הפרויקט הנבחר.
-3. בתפריט: **Google Auth Platform › Get started**.
-   - **App name:** `הכסף שלנו`. **User support email:** המייל שלכם. **Next**.
-   - **Audience:** **External**. **Next**.
-   - **Contact information:** המייל שלכם. **Next**, מסכימים לתנאים, **Create**.
-4. **Audience › Test users › Add users:** מוסיפים את שתי כתובות ה־Gmail מההתקנה ולוחצים **Save**.
+---
 
-   משאירים את האפליקציה במצב **Testing**. כך Google עצמו מכניס רק את שתי הכתובות האלו: שכבת הגנה שנייה.
-5. **Clients › Create client:**
-   - **Application type:** **Web application**. **Name:** `our-money`.
-   - **Authorized JavaScript origins › Add URI:** הכתובת הראשונה מהטרמינל.
-   - **Authorized redirect URIs › Add URI:** הכתובת השנייה (זו שמסתיימת ב־`/auth/google/callback`).
-   - **Create**.
-6. בחלון שנפתח מעתיקים את **Client ID** ואת **Client secret**.
+## שלב 5: מחברים את Google
 
-## 6. מסיימים את ההתקנה
+1. נכנסים ל־**https://console.cloud.google.com/projectcreate**
+2. **Project name:** `our-money` ← **Create**.
+3. נכנסים ל־**https://console.cloud.google.com/auth/overview** ולוחצים **Get started**.
+4. ממלאים:
+   - **App name:** `הכסף שלנו`
+   - **User support email:** ה־Gmail שלכם
+   - **Audience:** **External**
+   - **Contact information:** ה־Gmail שלכם
+5. מסמנים הסכמה ולוחצים **Create**.
+6. נכנסים ל־**https://console.cloud.google.com/auth/audience**
+7. תחת **Test users** לוחצים **Add users**, מוסיפים את שתי כתובות ה־Gmail, ולוחצים **Save**.
+8. נכנסים ל־**https://console.cloud.google.com/auth/clients** ולוחצים **Create client**.
+9. ממלאים:
+   - **Application type:** **Web application**
+   - **Authorized JavaScript origins** ← **Add URI**: מדביקים את הכתובת הראשונה מה־Terminal
+   - **Authorized redirect URIs** ← **Add URI**: מדביקים את הכתובת השנייה מה־Terminal
+10. לוחצים **Create**.
+11. נפתח חלון עם **Client ID** ו־**Client secret**. משאירים אותו פתוח.
 
-חוזרים לטרמינל:
+✅ **סיימתם את שלב 5.**
 
-| השאלה | מה עונים |
+---
+
+## שלב 6: מסיימים את ההתקנה
+
+חוזרים ל־Terminal:
+
+| כשרואים | עושים |
 |---|---|
-| `Client ID` | מדביקים (מסתיים ב־`.apps.googleusercontent.com`). |
-| `Client secret (hidden)` | מדביקים (לא יופיע על המסך). |
+| `Client ID` | מעתיקים את ה־**Client ID** מ־Google, מדביקים, ואז **Enter** |
+| `Client secret` | מעתיקים את ה־**Client secret** מ־Google, מדביקים, ואז **Enter** (לא רואים כלום על המסך, וזה בסדר) |
 
-**הצלחה:**
+✅ **סיימתם את שלב 6 כשמופיעה המילה `Done.`** מעליה מופיעה כתובת האפליקציה.
 
-```
-[7/7] Open the app
-  Open https://our-money.<שם>.workers.dev on your phone and log in with …
-  Done.
-```
+---
 
-## 7. נכנסים מהטלפון
+## שלב 7: פותחים בטלפון
 
-1. פותחים את הכתובת בטלפון ולוחצים **המשך עם Google**.
-2. בוחרים את החשבון. Google יכול להזהיר שהאפליקציה לא אומתה: זה צפוי במצב Testing. לוחצים **Continue**.
-3. מאשרים או משנים את השם שלכם ולוחצים **המשך**.
-4. מתקינים למסך הבית: ב־iPhone, שיתוף › **הוספה למסך הבית**; ב־Android, ⋮ › **התקנת אפליקציה**.
+כל אחד בטלפון שלו:
 
-## אחר כך
+1. שולחים את כתובת האפליקציה לטלפון (למשל בוואטסאפ לעצמכם) ופותחים אותה.
+2. לוחצים **המשך עם Google** ובוחרים את החשבון.
+3. אם Google כותב שהאפליקציה לא אומתה, לוחצים **Continue**.
+4. מאשרים את השם ולוחצים **המשך**.
+5. מוסיפים למסך הבית:
+   - **iPhone:** כפתור השיתוף ← **הוספה למסך הבית**
+   - **Android:** ⋮ ← **התקנת אפליקציה**
 
-- **להוסיף או להחליף אדם:** `npm run add-person` / `npm run remove-person`. בכתובת חדשה צריך להוסיף אותה גם ב־**Audience › Test users**.
-- **גרסה חדשה:** `git pull` (או הורדה מחדש), `npm install`, `npm run update`.
+🎉 **זהו! האפליקציה מוכנה.**
 
-## אם משהו לא עובד
+---
 
-| מה רואים | מה עושים |
+## פעם בחודש
+
+האפליקציה תבקש **לחדש**. עושים שוב את שלב 3 ומדביקים את הקוד באפליקציה.
+
+---
+
+## משהו לא עבד?
+
+| מה קרה | מה עושים |
 |---|---|
-| `Error 400: redirect_uri_mismatch` | הכתובת בשלב 5 לא זהה. מעתיקים אותה שוב מהטרמינל, בלי `/` בסוף הראשונה. |
-| `Access blocked` / `403: access_denied` | הכתובת לא ברשימת **Test users**. מוסיפים אותה. |
-| "לחשבון הזה אין גישה" | נכנסתם עם Gmail שלא הוזן בהתקנה. **כניסה עם חשבון אחר**. |
-| הטרמינל נסגר לפני שלב 6 | מריצים `npx wrangler secret put GOOGLE_CLIENT_ID` ומדביקים כשמתבקשים, ואז אותו דבר עם `GOOGLE_CLIENT_SECRET`. זהו, אין צורך בהתקנה מחדש. |
+| `RiseUp didn't accept this token` | עושים שוב את שלב 3 ומדביקים את הקוד החדש |
+| `node` לא מוכר | עושים שוב את שלב 1, סוגרים את ה־Terminal ופותחים מחדש |
+| `cannot find path` / `No such file` | עושים שוב את שלב 2 בדיוק כמו שכתוב |
+| Google כותב `redirect_uri_mismatch` | בשלב 5.9 הכתובות לא הודבקו בדיוק. מדביקים שוב |
+| Google כותב `Access blocked` | הכתובת לא נוספה ב־**Test users** (שלב 5.7) |
+| באפליקציה כתוב "לחשבון הזה אין גישה" | נכנסתם עם Gmail אחר. לוחצים **כניסה עם חשבון אחר** |
+
+**לא מוחקים את התיקייה `our-money-master`.** צריך אותה כדי להוסיף או להחליף אדם.
 
 </div>

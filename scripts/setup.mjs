@@ -1,4 +1,4 @@
-// `npm run setup`: a private copy of the app on your own free Cloudflare account.
+// `node scripts/setup.mjs`: a private copy of the app on your own free Cloudflare account.
 // Asks everything up front, then creates the database, deploys, and prints the address
 // (and, with passkeys, one invite link per person). `--dry-run` shows the steps without doing them.
 import { existsSync, readFileSync } from "node:fs";
@@ -31,6 +31,7 @@ import {
   wrangler,
   writeConfig,
   done,
+  ensurePackages,
 } from "./lib.mjs";
 
 const TOTAL = 7;
@@ -40,11 +41,13 @@ console.log("  About 5 minutes. Everything runs on your own Cloudflare account, 
 
 // wrangler.jsonc is written before deploy (the build needs it) and marked unfinished until the end,
 // so a setup that stopped half way can simply be run again.
-const UNFINISHED = "// UNFINISHED SETUP: run `npm run setup` again to finish.";
+const UNFINISHED = "// UNFINISHED SETUP: run `node scripts/setup.mjs` again to finish.";
 const previous = existsSync(CONFIG) ? readFileSync(CONFIG, "utf8") : null;
 if (previous && !previous.startsWith(UNFINISHED) && !DRY)
-  fail("wrangler.jsonc already exists, so this copy is already set up. To install a new version, run `npm run update`.");
+  fail("wrangler.jsonc already exists, so this copy is already set up. To install a new version, run `node scripts/update.mjs`.");
 if (previous?.startsWith(UNFINISHED)) console.log("  Finishing the setup that stopped last time. Answer the questions again; nothing is duplicated.");
+
+await ensurePackages();
 
 // ── 1. Cloudflare ──
 step(1, TOTAL, "Cloudflare account");
@@ -95,7 +98,7 @@ for (;;) {
   if (result === "ok") break;
   if (result === "rejected") console.log("  RiseUp didn't accept this token. Create a new one and paste it.");
   else if (await confirm("Couldn't reach RiseUp to check the token. Try again?")) continue;
-  else fail("Stopped before creating anything. Run `npm run setup` again when RiseUp is reachable.");
+  else fail("Stopped before creating anything. Run `node scripts/setup.mjs` again when RiseUp is reachable.");
 }
 ok("RiseUp token works (it's valid for 30 days; you renew it from the app)");
 
@@ -107,7 +110,7 @@ const existing = await listDatabases();
 let dbId = existing.find((d) => d.name === name)?.uuid;
 if (dbId) {
   if (!(await confirm(`A database named "${name}" already exists on this account. Use it?`, !!previous)))
-    fail("Stopped. Run `npm run setup` again with a different name.");
+    fail("Stopped. Run `node scripts/setup.mjs` again with a different name.");
 } else {
   await wrangler(["d1", "create", name], { capture: true, quiet: true });
   dbId = (await listDatabases()).find((d) => d.name === name)?.uuid ?? (DRY ? "00000000-0000-0000-0000-000000000000" : null);
@@ -158,7 +161,7 @@ if (mode === "google") {
 step(7, TOTAL, "Open the app");
 if (mode === "passkey") {
   console.log("  Send each person their own link. Open it on the phone, and Face ID / fingerprint does the rest.");
-  console.log(`  ${dim("Each link works once, for 24 hours. Need a new one? npm run add-person")}\n`);
+  console.log(`  ${dim("Each link works once, for 24 hours. Need a new one? node scripts/add-person.mjs")}\n`);
   await revokeInvites(name); // links from a setup that stopped half way
   for (let i = 1; i <= people; i++) console.log(`  Person ${i}:  ${await createInvite(name, address)}`);
 } else {

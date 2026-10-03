@@ -134,6 +134,27 @@ export function run(file, args, { capture = false, quiet = false, input, allowFa
   });
 }
 
+/**
+ * Install the app's packages, so a guide needs only `node scripts/<x>.mjs`: the same command in
+ * PowerShell (which blocks npm's .ps1 shim), Command Prompt and macOS Terminal. Uses the npm that
+ * ships next to this Node.
+ */
+export async function installPackages() {
+  const nodeDir = dirname(process.execPath);
+  const npmCli = [
+    process.env.npm_execpath,
+    join(nodeDir, "node_modules", "npm", "bin", "npm-cli.js"), // Windows
+    join(nodeDir, "..", "lib", "node_modules", "npm", "bin", "npm-cli.js"), // macOS, Linux
+  ].find((p) => p && p.endsWith(".js") && existsSync(p));
+  if (!npmCli) fail("Couldn't find npm next to Node. Reinstall Node.js from https://nodejs.org and try again.");
+  console.log("  Getting the app ready (about a minute)…");
+  await run(npmCli, ["install", "--no-audit", "--no-fund", "--loglevel=error"]);
+  ok("App ready");
+}
+
+/** Install the packages if this folder doesn't have them yet. */
+export const ensurePackages = () => (existsSync(WRANGLER) && existsSync(VITE) ? undefined : installPackages());
+
 export const wrangler = (args, opts) => run(WRANGLER, args, opts);
 export const vite = (args, opts) => run(VITE, args, opts);
 
@@ -162,7 +183,7 @@ export async function buildAndDeploy() {
 // ── wrangler.jsonc ──────────────────────────────────────────────────────────
 
 export function readConfig() {
-  if (!existsSync(CONFIG)) fail("No wrangler.jsonc here. Run `npm run setup` first.");
+  if (!existsSync(CONFIG)) fail("No wrangler.jsonc here. Run `node scripts/setup.mjs` first.");
   return readFileSync(CONFIG, "utf8");
 }
 

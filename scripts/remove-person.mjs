@@ -1,4 +1,4 @@
-// `npm run remove-person`: take someone's access away. They're logged out everywhere at once.
+// `node scripts/remove-person.mjs`: take someone's access away. They're logged out everywhere at once.
 // Passkeys: deletes the person with their passkeys. Google / email code: removes the email and deploys.
 import {
   allowedEmails,
@@ -10,6 +10,7 @@ import {
   d1,
   deployConfig,
   done,
+  ensurePackages,
   fail,
   getValue,
   ok,
@@ -24,6 +25,7 @@ const mode = getValue(config, "AUTH_MODE");
 const db = getValue(config, "database_name");
 
 console.log(`\n${bold("Our Money · remove a person")}`);
+await ensurePackages();
 await chooseCloudflareAuth();
 
 if (mode === "passkey") {
@@ -36,7 +38,7 @@ if (mode === "passkey") {
   // member (ON DELETE CASCADE).
   await revokeInvites(db);
   await d1(db, `DELETE FROM members WHERE id = ${Number(pick.id)}`);
-  ok("Removed. To let them in again (say, on a new phone): npm run add-person\n");
+  ok("Removed. To let them in again (say, on a new phone): node scripts/add-person.mjs\n");
 } else {
   const emails = allowedEmails(config);
   if (emails.length === 0) fail("Nobody has access yet.");
